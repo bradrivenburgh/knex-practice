@@ -64,8 +64,4 @@ function mostPopularVideoForDays(days) {
 //searchByProductName('holo');
 //paginateProducts(2);
 //getProductsWithImages();
-mostPopularVideoForDays(30);
-
-module.exports({
-  knexInstance
-})
+//mostPopularVideoForDays(30);
