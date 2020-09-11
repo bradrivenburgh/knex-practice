@@ -9,10 +9,11 @@ const knexInstance = knex({
 
 function searchItemsByText(searchTerm) {
   knexInstance
-    .select('name')
+    .select('*')
     .from('shopping_list')
     .where('name', 'ILIKE', `%${searchTerm}%`)
     .then(result => {
+      console.log('SEARCH TERM', {searchTerm});
       console.log(result);
     });
 }
@@ -26,6 +27,7 @@ function paginateItems(pageNumber) {
     .limit(productsPerPage)
     .offset(offset)
     .then(result => {
+      console.log('PAGINATE ITEMS', { pageNumber });
       console.log(result);
     });
 }
@@ -40,7 +42,10 @@ function itemsAddedAfterDate(daysAgo) {
       knexInstance.raw(`now() - '?? days'::INTERVAL`, daysAgo)
     )
     .orderBy([{column: 'date_added', order: 'ASC'}])
-    .then(result => console.log(result));
+    .then(result => {
+      console.log(`ITEMS ADDED IN THE LAST ${daysAgo} days:`);
+      console.log(result);
+    });
 }
 
 function totalPriceByCategory() {
@@ -50,7 +55,10 @@ function totalPriceByCategory() {
     .from('shopping_list')
     .groupBy('category')
     .orderBy([{ column: 'category', order: 'ASC' }])
-    .then(result => console.log(result));
+    .then(result => {
+      console.log('COST PER CATEGORY:');
+      console.log(result);
+    });
 }
 
 //searchItemsByText('turnip');
