@@ -30,5 +30,30 @@ function paginateItems(pageNumber) {
     });
 }
 
+function itemsAddedAfterDate(daysAgo) {
+  knexInstance
+    .select('name', 'price', 'date_added', 'category')
+    .from('shopping_list')
+    .where(
+      'date_added',
+      '>',
+      knexInstance.raw(`now() - '?? days'::INTERVAL`, daysAgo)
+    )
+    .orderBy([{column: 'date_added', order: 'ASC'}])
+    .then(result => console.log(result));
+}
+
+function totalPriceByCategory() {
+  knexInstance
+    .select('category')
+    .sum('price')
+    .from('shopping_list')
+    .groupBy('category')
+    .orderBy([{ column: 'category', order: 'ASC' }])
+    .then(result => console.log(result));
+}
+
 //searchItemsByText('turnip');
-paginateItems(2)
+//paginateItems(2)
+//itemsAddedAfterDate(10);
+totalPriceByCategory();
