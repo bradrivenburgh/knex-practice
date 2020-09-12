@@ -1,7 +1,19 @@
 const ArticlesService = {
   getAllArticles(knexInstance) {
-    return 'all the articles!!';
-  }
+    return knexInstance
+      .select('*')
+      .from('blogful_articles');
+  },
+  insertArticle(knexInstance, newArticle) {
+    return knexInstance
+      .insert(newArticle)
+      .into('blogful_articles')
+      .returning('*')
+      .then(rows => {
+        return rows[0];
+      })
+  },
+  
 };
 
 module.exports = ArticlesService;
