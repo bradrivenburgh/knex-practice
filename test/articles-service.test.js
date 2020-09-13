@@ -31,7 +31,7 @@ describe('ArticlesService object', () => {
       },
   ];
 
-  // Create knex instance before running each test
+  // Create knex instance before running all tests
   before(() => {
     db = knex({
       client: 'pg',
@@ -39,14 +39,15 @@ describe('ArticlesService object', () => {
     });
   });
 
-  // Clear data from test table before running the tests
+  // Clear data from test table before running all tests
   before(() => db('blogful_articles').truncate());
+
+  // Disconnect from the knex-practice-test db after running all tests
+  after(() => db.destroy());
 
   // Clear data from test table after each test
   afterEach(() => db('blogful_articles').truncate());
 
-  // Disconnect from the knex-practice-test db after running the tests
-  after(() => db.destroy());
 
   context(`Given 'blogful_articles' has data`, () => {
     // Seed the test table with the expected values from testArticles
