@@ -50,7 +50,7 @@ describe('ArticlesService object', () => {
 
   context(`Given 'blogful_articles' has data`, () => {
     // Seed the test table with the expected values from testArticles
-    before(() => {
+    beforeEach(() => {
       return db
         .into('blogful_articles')
         .insert(testArticles);
@@ -61,6 +61,48 @@ describe('ArticlesService object', () => {
       return ArticlesService.getAllArticles(db)
         .then(actual => {
           expect(actual).to.eql(testArticles);
+        });
+    });
+
+    it(`getById() resolves and article by id from 'blogful_articles' table`, () => {
+      const thirdId = 3;
+      const thirdTestArticle = testArticles[thirdId - 1];
+      return ArticlesService.getById(db, thirdId)
+        .then(actual => {
+          expect(actual).to.eql({
+            id: thirdId,
+            title: thirdTestArticle.title,
+            content: thirdTestArticle.content,
+            date_published: thirdTestArticle.date_published
+          });
+        });
+    });
+
+    it(`deleteArticle() removes an article by id from 'blogful_articles' table`, () => {
+      const thirdId = 3;
+      return ArticlesService.deleteArticle(db, thirdId)
+        .then(() => ArticlesService.getAllArticles(db))
+        .then(allArticles => {
+          // copy the test articles array without the 'deleted' article
+          const expected = testArticles.filter(article => article.id !== thirdId);
+          expect(allArticles).to.eql(expected)
+        });
+    });
+
+    it(`updateArticle() updates an article from the 'blogful_articles' table`, () => {
+      const thirdId = 3;
+      const newArticleData = {
+        title: 'updated title',
+        content: 'udpated content',
+        date_published: new Date()
+      }
+      return ArticlesService.updateArticle(db, thirdId, newArticleData)
+        .then(() => ArticlesService.getById(db, thirdId))
+        .then(article => {
+          expect(article).to.eql({
+            id: thirdId,
+            ...newArticleData
+          });
         });
     });
   });
@@ -77,7 +119,6 @@ describe('ArticlesService object', () => {
         content: 'Test new content',
         date_published: new Date('2020-01-01T00:00:00.000Z')
       }
-
       return ArticlesService.insertArticle(db, newArticle)
         .then(actual => {
           expect(actual).to.eql({
@@ -88,5 +129,6 @@ describe('ArticlesService object', () => {
           });
         });
     });
+
   });
 });
